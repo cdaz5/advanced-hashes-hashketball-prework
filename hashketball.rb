@@ -121,148 +121,79 @@ end
 
 
 def num_points_scored(player_name)
-  number_of_points = nil
-
   game_hash.each do |location, team_data|
-    if team_data.class == Hash
-    team_data.each do |attribute, data|
-      if data.class == Hash
-      data.each do |player, stats|
-        if player == player_name
-          number_of_points = stats.fetch(:points)
-        end
-      end
+    team_data[:players].each do |player, stats|
+      if player_name == player
+        return stats[:points]
     end
-  end
-end
-end
-number_of_points
+    end
+    end
 end
 
 def shoe_size(player_name)
-  shoe_size = nil
-
   game_hash.each do |location, team_data|
-    if team_data.class == Hash
-      team_data.each do |attribute, data|
-        if data.class == Hash
-          data.each do |player, stats|
-            if player == player_name
-              shoe_size = stats.fetch(:shoe)
-            end
-          end
-        end
+    team_data[:players].each do |player, stats|
+      if player_name == player
+        return stats[:shoe]
       end
     end
   end
-    shoe_size
-  end
-
-  def team_colors(team_name)
-    colors = nil
-
-    game_hash.each do |location, team_data|
-      if team_data.value?(team_name)
-        colors = team_data.fetch(:colors)
-      end
-    end
-    colors
-  end
-
-def team_names
- names = []
- names << game_hash[:home][:team_name]
- names << game_hash[:away][:team_name]
- names
 end
 
-#def teams
-#  game_hash.values
-#end
+def team_colors(team_name)
+  game_hash.each do |location, team_data|
+    if team_data[:team_name] == team_name
+      return team_data[:colors]
+    end
+  end
+end
 
-#def find_the_team(team_name)
-#  teams.find {|team| team.fetch(:team_name) == team_name}
-#end
+def team_names
+  team_names = []
+
+  game_hash.each do |location, team_data|
+    team_names << team_data[:team_name]
+  end
+  team_names
+end
 
 def player_numbers(team_name)
-    home_numbers = []
-    home_team_name = game_hash[:home][:team_name]
-    game_hash[:home][:players].each do |player|
-      player_number = player[1][:number]
-      home_numbers << player_number
-      end
-      away_numbers = []
-      away_team_name = game_hash[:away][:team_name]
-      game_hash[:away][:players].each do |player|
-        player_number = player[1][:number]
-        away_numbers << player_number
-      end
-      if team_name == home_team_name
-        return home_numbers
-      else
-        return away_numbers
-    end
+  team_numbers = []
 
+  game_hash.each do |location, team_data|
+    if team_data[:team_name] == team_name
+      team_data[:players].each do |player, stats|
+        team_numbers << stats[:number]
+      end
+    end
   end
+  team_numbers
+end
 
 def player_stats(player_name)
-  game_hash[:away][:players].each do |player, stats|
-    if player_name == player
-      return stats
-    else game_hash[:home][:players].each do |player, stats|
-      if player_name == player
+  game_hash.each do |location, team_data|
+    team_data[:players].each do |player, stats|
+      if player == player_name
         return stats
       end
     end
   end
 end
-end
 
 def big_shoe_rebounds
-  shoe_sizes = []
-  game_hash[:home][:players].each do |player|
-    shoe_size = player[1][:shoe]
-    shoe_sizes << shoe_size
-  end
-  game_hash[:away][:players].each do |player|
-    shoe_size = player[1][:shoe]
-    shoe_sizes << shoe_size
-  end
-  #binding.pry
-  largest_size = shoe_sizes.sort.last
+  shoe_size = 0
+  rebounds = ""
 
-  game_hash[:home][:players].each do |player, stats|
-    #binding.pry
-    stats.each do |k, v|
+
+  game_hash.each do |location, team_data|
+    team_data[:players].each do |player, stats|
       #binding.pry
-      if k == :shoe && v == largest_size
-        binding.pry
-        if k == :rebounds
-          binding.pry
-          return v
-        end
-
-end
-end
-    #binding.pry
+      if stats[:shoe] > shoe_size
+        #binding.pry
+        shoe_size = stats[:shoe]
+        rebounds = stats[:rebounds]
+      end
+    end
   end
+  rebounds
 end
-
-
-
-
-
-  #   end
-  #   away_numbers = []
-  #   away_team_name = game_hash[:away][:team_name]
-  #   game_hash[:away][:players].each do |player|
-  #     player_number = player[1][:number]
-  #     away_numbers << player_number
-  # end
-
-
-#     binding.pry
-#   end
-# end
-
-player_numbers("Brooklyn Nets")
